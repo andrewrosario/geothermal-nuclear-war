@@ -5,10 +5,12 @@ class CreateAllTables < ActiveRecord::Migration[5.0]
             c.integer :population
             c.string :player
         end
+    
 
         create_table :games do |g|
             g.string :player_name
         end
+    
 
         create_table :missiles do |m|
             m.integer :city_id
