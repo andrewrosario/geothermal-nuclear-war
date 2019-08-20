@@ -7,7 +7,7 @@ ActiveRecord::Base.logger = nil
 
 def separate_comma(number)
     number.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
-  end
+end
 
 def welcome 
     puts "Welcome to War Games"
@@ -28,49 +28,50 @@ end
 
 def list_cities(plyer)
    City.all.where("player = ?", plyer)
-# usa2 = usa.collect {|city| city.name}
-# puts usa2
 end 
+
+def row_array(city)
+    array = []
+    array << city.id
+    array << city.name 
+end
 
 def assign_missiles(plyer)
     big_array = []
     big_array = list_cities(plyer).collect do |city| 
-        array = [] 
-        array << city.id
-        array << city.name 
+        array = row_array(city)
         array << Missile.where(["city_id = ? AND active = ?", city, true]).count 
     end 
 end
 
-def display(plyer)
-    rows = assign_missiles(plyer)
+def user_display
+    rows = assign_missiles("user")
     table = Terminal::Table.new :rows => rows
     puts table 
 end 
 
 def target_display
     big_array = list_cities("computer").collect do |city|
-        array = []
-        array << city.id
-        array << city.name 
+        row_array(city)
     end 
     table = Terminal::Table.new :rows => big_array
     puts table
 end
 
-def build_missiles(plyer)
+def build_missiles
     n = 5 
-    puts "#{player_name}, you are now able to create your nuclear arsenal."
+    puts "You are now able to create your nuclear arsenal."
     puts "You will build an ICBM by assigning that missile to a city." 
     puts "Select a city by entering the number associate with that city."
     while n > 0 
-        display(plyer)
+        user_display
         puts "You have #{n} missiles to deploy"
         puts "Where would you like to deploy your missiles?"
         input = gets.strip.to_i #make sure to add a parameter that limits the user only selecting 1-5 for both cities and missiles August 20end
         create_missile(input)
         n -= 1 
     end 
+    user_display
 end
 
 def create_missile(input)
@@ -118,9 +119,9 @@ def report_results(target)
     puts "You have killed #{separate_comma(city.population)} people."
 end
 
-launch
+
 # build_missiles('user')
-# binding.pry
+binding.pry
 puts "done"
 
     
