@@ -1,8 +1,13 @@
 require_relative "../config/environment"
 user_kills = 0 
 cpu_kills = 0
+player_name = "Mr. President"
 old_logger = ActiveRecord::Base.logger
 ActiveRecord::Base.logger = nil
+
+def separate_comma(number)
+    number.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
+  end
 
 def welcome 
     puts "Welcome to War Games"
@@ -17,6 +22,7 @@ end
 
 def new_game(commander)
     nuke = Game.new(player_name: commander)
+    player_name = commander
     nuke.save
 end 
 
@@ -53,7 +59,6 @@ def target_display
 end
 
 def build_missiles(plyer)
-    player_name = Game.last.player_name
     n = 5 
     puts "#{player_name}, you are now able to create your nuclear arsenal."
     puts "You will build an ICBM by assigning that missile to a city." 
@@ -84,7 +89,7 @@ def launch
     puts "Please select the target you want to nuke"
     targeting = gets.strip.to_i
     missile_away(selection, targeting)
-    puts "Hasta La Vista Baby"
+    report_results(targeting)
     # user_kills += City.where("id = ?", targeting)[0].population
 end
 
@@ -107,8 +112,15 @@ def computer_launch
     missile_away(from_city, to_city)
 end
 
-build_missiles('user')
-binding.pry
+def report_results(target)
+    city = City.where("id = ?", target).first
+    puts "You have successfully bombed #{city.name}."
+    puts "You have killed #{separate_comma(city.population)} people."
+end
+
+launch
+# build_missiles('user')
+# binding.pry
 puts "done"
 
     
