@@ -14,14 +14,14 @@ def ask_user
 end 
 
 def new_game(commander)
-    nuke =  Game.new(player_name: commander)
+    nuke = Game.new(player_name: commander)
     nuke.save
 end 
 
 def list_cities(plyer)
    City.all.where("player = ?", plyer)
-#   usa2 = usa.collect {|city| city.name}
-#     puts usa2
+# usa2 = usa.collect {|city| city.name}
+# puts usa2
 end 
 
 def assign_missiles(plyer)
@@ -35,9 +35,9 @@ def assign_missiles(plyer)
 end
 
 def display(plyer)
-rows = assign_missiles(plyer)
-table = Terminal::Table.new :rows => rows
-puts table 
+    rows = assign_missiles(plyer)
+    table = Terminal::Table.new :rows => rows
+    puts table 
 end 
 
 def target_display
@@ -57,13 +57,17 @@ def build_missiles(plyer)
         puts "You have #{n} missiles to deploy"
         puts "where would you like to deploy your missiles"
         input = gets.strip.to_i #make sure to add a parameter that limits the user only selecting 1-5 for both cities and missiles August 20end
-        city_obj = City.all.find {|city| city.id == input}
-        new_missile = Missile.new
-        new_missile.city = city_obj
-        new_missile.active = true
-        new_missile.save
+        create_missile(input)
         n -= 1 
     end 
+end
+
+def create_missile(input)
+    city_obj = City.all.find {|city| city.id == input}
+    new_missile = Missile.new
+    new_missile.city = city_obj
+    new_missile.active = true
+    new_missile.save
 end
     
 def launch
@@ -73,18 +77,29 @@ def launch
     target_display
     puts "Please select the target you want to nuke"
     targeting = gets.strip.to_i
-    current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
-    current_missile.dropped_on = targeting
-    current_missile.active = false 
-    current_missile.save
+    missile_away(selection, targeting)
     puts "Hasta La Vista Baby"
     # user_kills += City.where("id = ?", targeting)[0].population
 end
 
+def missile_away(selection, targeting)
+    current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
+    current_missile.dropped_on = targeting
+    current_missile.active = false 
+    current_missile.save
+end
 
-welcome
-new_game(ask_user)
-build_missiles("user")
-launch
+def computer_missiles
+    num_cities = list_cities('computer').count
+    5.times do
+        create_missile(rand(6..10))
+    end 
+    binding.pry
+end
+
+
+
+computer_missiles
+puts "done"
 
     
