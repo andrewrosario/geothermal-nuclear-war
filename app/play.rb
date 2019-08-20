@@ -1,6 +1,6 @@
 require_relative "../config/environment"
-user_kills = 0 
-cpu_kills = 0
+user_kills = []
+cpu_kills = []
 player_name = "Mr. President"
 old_logger = ActiveRecord::Base.logger
 ActiveRecord::Base.logger = nil
@@ -67,7 +67,12 @@ def build_missiles
         user_display
         puts "You have #{n} missiles to deploy"
         puts "Where would you like to deploy your missiles?"
-        input = gets.strip.to_i #make sure to add a parameter that limits the user only selecting 1-5 for both cities and missiles August 20end
+        input = gets.strip.to_i
+        until input.between?(1,5) 
+            puts "You must select one of your own cities"
+            puts "Where would you like to deploy your missiles?"
+            input = gets.strip.to_i
+        end
         create_missile(input)
         n -= 1 
     end 
@@ -95,6 +100,7 @@ def launch
 end
 
 def missile_away(selection, targeting)
+    # binding.pry
     current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
     current_missile.dropped_on = targeting
     current_missile.active = false 
@@ -107,20 +113,25 @@ def computer_missiles
     end
 end
 
-def computer_launch
+def computer_launch(score)
     from_city = rand(6..10)
     to_city = rand(1..5)
     missile_away(from_city, to_city)
+    score << report_results(to_city)
 end
 
 def report_results(target)
     city = City.where("id = ?", target).first
     puts "You have successfully bombed #{city.name}."
     puts "You have killed #{separate_comma(city.population)} people."
+    city.population
 end
 
+def current_score(kills)
+    puts kills.sum
+end
 
-# build_missiles('user')
+build_missiles
 binding.pry
 puts "done"
 
