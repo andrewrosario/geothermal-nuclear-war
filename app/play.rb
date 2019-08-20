@@ -1,6 +1,8 @@
 require_relative "../config/environment"
 user_kills = 0 
 cpu_kills = 0
+old_logger = ActiveRecord::Base.logger
+ActiveRecord::Base.logger = nil
 
 def welcome 
     puts "Welcome to War Games"
@@ -51,11 +53,15 @@ def target_display
 end
 
 def build_missiles(plyer)
+    player_name = Game.last.player_name
     n = 5 
+    puts "#{player_name}, you are now able to create your nuclear arsenal."
+    puts "You will build an ICBM by assigning that missile to a city." 
+    puts "Select a city by entering the number associate with that city."
     while n > 0 
         display(plyer)
         puts "You have #{n} missiles to deploy"
-        puts "where would you like to deploy your missiles"
+        puts "Where would you like to deploy your missiles?"
         input = gets.strip.to_i #make sure to add a parameter that limits the user only selecting 1-5 for both cities and missiles August 20end
         create_missile(input)
         n -= 1 
@@ -90,16 +96,19 @@ def missile_away(selection, targeting)
 end
 
 def computer_missiles
-    num_cities = list_cities('computer').count
     5.times do
         create_missile(rand(6..10))
-    end 
-    binding.pry
+    end
 end
 
+def computer_launch
+    from_city = rand(6..10)
+    to_city = rand(1..5)
+    missile_away(from_city, to_city)
+end
 
-
-computer_missiles
+build_missiles('user')
+binding.pry
 puts "done"
 
     
