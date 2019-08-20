@@ -53,7 +53,7 @@ def build_missiles(plyer)
     index = input.to_i - 1  
     city_name = assign_missiles(plyer)[index][1]
     city_obj = City.all.find {|city| city.name == city_name}
-    new_missile = Missile.new(city_id, false, false)
+    new_missile = Missile.new(city_obj)
     
     binding.pry
     #make sure to add a parameter that limits the user only selecting 1-5 for both cities and missiles August 20
