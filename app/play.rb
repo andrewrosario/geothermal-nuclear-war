@@ -46,7 +46,7 @@ end
 
 def user_display
     rows = assign_missiles("user")
-    table = Terminal::Table.new :rows => rows
+    table = Terminal::Table.new :headings => ['', 'City Name', 'Number of Missiles'], :rows => rows
     puts table 
 end 
 
@@ -62,7 +62,7 @@ def build_missiles
     n = 5 
     puts "You are now able to create your nuclear arsenal."
     puts "You will build an ICBM by assigning that missile to a city." 
-    puts "Select a city by entering the number associate with that city."
+    puts "Select a city by entering the number associated with that city."
     while n > 0 
         user_display
         puts "You have #{n} missiles to deploy"
@@ -134,6 +134,7 @@ def current_score(kills)
     puts kills.sum
 end
 
+build_missiles  
 binding.pry
 puts "done"
 
