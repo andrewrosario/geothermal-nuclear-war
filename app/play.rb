@@ -1,5 +1,6 @@
-require "../config/environment"
-
+require_relative "../config/environment"
+user_kills = 0 
+cpu_kills = 0
 def welcome 
     puts "Welcome to War Games"
 end 
@@ -24,43 +25,60 @@ end
 
 def assign_missiles(plyer)
     big_array = []
-    i = 0
+    
     big_array = list_cities(plyer).collect do |city| 
         array = [] 
-        array << i + 1 
-        i = i + 1 
+        array << city.id
         array << city.name 
-        array << 0 
+        array << Missile.where("city_id = ?", city).count
         
     end 
     
 end
 def display(plyer)
-# table = Terminal::Table.new do |t|
-#     t.rows = assign_missiles(plyer)
-    
-# end
 rows = assign_missiles(plyer)
 table = Terminal::Table.new :rows => rows
 puts table 
-
 end 
+def target_display
+
+        
+        big_array = list_cities("computer").collect do |city|
+            array = []
+            array << city.id
+            array << city.name 
+        end 
+    table = Terminal::Table.new :rows => big_array
+        puts table
+end
 def build_missiles(plyer)
     n = 5 
-    puts "You have #{n} missiles to deploy"
-    puts "where would you like to deploy your missiles"
-    input = gets.strip
-    index = input.to_i - 1  
-    city_name = assign_missiles(plyer)[index][1]
-    city_obj = City.all.find {|city| city.name == city_name}
-    new_missile = Missile.new_missile(city_obj)
-    
-    binding.pry
-    #make sure to add a parameter that limits the user only selecting 1-5 for both cities and missiles August 20
+    while n > 0 
+        display(plyer)
+        puts "You have #{n} missiles to deploy"
+        puts "where would you like to deploy your missiles"
+        input = gets.strip.to_i #make sure to add a parameter that limits the user only selecting 1-5 for both cities and missiles August 20end
+        city_obj = City.all.find {|city| city.id == input}
+        new_missile = Missile.new
+        new_missile.city = city_obj
+        new_missile.save
+        n -= 1 
+        
+    end 
 end
+    
+def launch
+    display("user")
+    puts "Please select a missile by city designation"
+    selection = gets.strip.to_i 
+    target_display
+    puts "Please select the target you want to nuke"
+    targeting = gets.strip.to_i
+    current_missile = Missile.where("city_id = ?", selection)
+
+end
+
 build_missiles("user")
-
-
 
 
 
