@@ -88,19 +88,22 @@ def create_missile(input)
 end
     
 def launch
-    display("user")
+    user_display
     puts "Please select a missile by city designation"
     selection = gets.strip.to_i 
+    until Missile.all.find {|m| m.id == selection}
+        puts "That city has no missiles."
+        puts "Please select a city from which to launch your missile."
+        selection = gets.strip.to_i 
+    end
     target_display
     puts "Please select the target you want to nuke"
     targeting = gets.strip.to_i
     missile_away(selection, targeting)
     report_results(targeting)
-    # user_kills += City.where("id = ?", targeting)[0].population
 end
 
 def missile_away(selection, targeting)
-    # binding.pry
     current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
     current_missile.dropped_on = targeting
     current_missile.active = false 
@@ -131,7 +134,6 @@ def current_score(kills)
     puts kills.sum
 end
 
-build_missiles
 binding.pry
 puts "done"
 
