@@ -11,8 +11,8 @@ def ask_user
     puts "Shall we play a game,  #{name}..."
     name 
 end 
-def new_game(name)
-    nuke =  Game.new(name)
+def new_game(commander)
+    nuke =  Game.new(player_name: commander)
     nuke.save
 end 
 
@@ -30,7 +30,7 @@ def assign_missiles(plyer)
         array = [] 
         array << city.id
         array << city.name 
-        array << Missile.where("city_id = ?", city).count
+        array << Missile.where(["city_id = ? AND active = ?", city, true]).count
         
     end 
     
@@ -61,6 +61,7 @@ def build_missiles(plyer)
         city_obj = City.all.find {|city| city.id == input}
         new_missile = Missile.new
         new_missile.city = city_obj
+        new_missile.active = true
         new_missile.save
         n -= 1 
         
@@ -74,13 +75,18 @@ def launch
     target_display
     puts "Please select the target you want to nuke"
     targeting = gets.strip.to_i
-    current_missile = Missile.where("city_id = ?", selection)
-
+    current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
+      
+        current_missile.dropped_on = targeting
+       current_missile.active = false 
+       current_missile.save
+    puts "Hasta La Vista Baby"
+    # user_kills += City.where("id = ?", targeting)[0].population
+    
 end
-
+welcome
+new_game(ask_user)
 build_missiles("user")
-
-
-
+launch
 
     
