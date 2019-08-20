@@ -1,9 +1,4 @@
 require "../config/environment"
-require_relative "models/city"
-require_relative "models/missile"
-require_relative "models/game"
-
-
 
 def welcome 
     puts "Welcome to War Games"
@@ -16,8 +11,20 @@ def ask_user
     name 
 end 
 def new_game(name)
-   nuke =  Game.new(name)
+    nuke =  Game.new(name)
     nuke.save
 end 
-binding.pry
-______________    
+
+
+def list_cities
+    sql =<<-SQL
+    SELECT * 
+    FROM cities
+    SQL
+binding.pry 
+end 
+
+________________
+
+
+    
