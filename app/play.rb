@@ -1,6 +1,7 @@
 require_relative "../config/environment"
 user_kills = 0 
 cpu_kills = 0
+
 def welcome 
     puts "Welcome to War Games"
 end 
@@ -11,11 +12,11 @@ def ask_user
     puts "Shall we play a game,  #{name}..."
     name 
 end 
+
 def new_game(commander)
     nuke =  Game.new(player_name: commander)
     nuke.save
 end 
-
 
 def list_cities(plyer)
    City.all.where("player = ?", plyer)
@@ -25,32 +26,30 @@ end
 
 def assign_missiles(plyer)
     big_array = []
-    
     big_array = list_cities(plyer).collect do |city| 
         array = [] 
         array << city.id
         array << city.name 
-        array << Missile.where(["city_id = ? AND active = ?", city, true]).count
-        
+        array << Missile.where(["city_id = ? AND active = ?", city, true]).count 
     end 
-    
 end
+
 def display(plyer)
 rows = assign_missiles(plyer)
 table = Terminal::Table.new :rows => rows
 puts table 
 end 
-def target_display
 
-        
-        big_array = list_cities("computer").collect do |city|
-            array = []
-            array << city.id
-            array << city.name 
-        end 
+def target_display
+    big_array = list_cities("computer").collect do |city|
+        array = []
+        array << city.id
+        array << city.name 
+    end 
     table = Terminal::Table.new :rows => big_array
-        puts table
+    puts table
 end
+
 def build_missiles(plyer)
     n = 5 
     while n > 0 
@@ -64,7 +63,6 @@ def build_missiles(plyer)
         new_missile.active = true
         new_missile.save
         n -= 1 
-        
     end 
 end
     
@@ -76,14 +74,14 @@ def launch
     puts "Please select the target you want to nuke"
     targeting = gets.strip.to_i
     current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
-      
-        current_missile.dropped_on = targeting
-       current_missile.active = false 
-       current_missile.save
+    current_missile.dropped_on = targeting
+    current_missile.active = false 
+    current_missile.save
     puts "Hasta La Vista Baby"
     # user_kills += City.where("id = ?", targeting)[0].population
-    
 end
+
+
 welcome
 new_game(ask_user)
 build_missiles("user")
