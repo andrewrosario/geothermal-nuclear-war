@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 1) do
+ActiveRecord::Schema.define(version: 2) do
 
   create_table "cities", force: :cascade do |t|
     t.string "name"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 1) do
   create_table "missiles", force: :cascade do |t|
     t.integer "city_id"
     t.integer "dropped_on"
-    t.boolean "destroyed"
+    t.boolean "active"
   end
 
 end
