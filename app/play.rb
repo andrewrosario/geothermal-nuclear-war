@@ -1,7 +1,9 @@
+require "../config/environment"
 require_relative "models/city"
 require_relative "models/missile"
 require_relative "models/game"
-require "config/environment"
+
+
 
 def welcome 
     puts "Welcome to War Games"
