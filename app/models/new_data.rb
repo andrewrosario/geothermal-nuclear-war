@@ -1,9 +1,9 @@
 
-require 'pry'
-require 'active_record'
-require_relative 'city'
-require_relative 'game'
-require_relative 'missile'
+# require 'pry'
+# require 'active_record'
+# require_relative 'city'
+# require_relative 'game'
+# require_relative 'missile'
 
 # City.new_city("New York City", 8601186, "User")
 # City.new_city("Los Angeles", 4057841, "user")
