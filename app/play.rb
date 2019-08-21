@@ -1,9 +1,7 @@
 require_relative "../config/environment"
 
-user_kills = []
 cpu_kills = []
-player_name = "Mr. President"
-
+user_kills = []
 old_logger = ActiveRecord::Base.logger
 ActiveRecord::Base.logger = nil
 
@@ -42,7 +40,7 @@ end
 def ask_user 
     puts "Please Enter Name"
     name = gets.strip 
-    puts "Shall we play a game, #{name}..."
+    puts "Shall we play a game, #{name}?"
     name 
 end 
 
@@ -123,25 +121,27 @@ def create_missile(input)
     Missile.new_missile(city_obj)
 end
     
-def launch
+def launch(score)
     user_display
-    puts "Please select a missile by city designation"
+    sleep(1)
+    puts "Now that all your missiles have been deployed, you may begin your attack."
+    puts "Please select a city from which to launch your missile."
     selection = give_up(gets.strip)
-    until Missile.all.find {|m| m.id == selection}
+    until Missile.all.find {|m| m.city_id == selection}
         puts "That city has no missiles."
         puts "Please select a city from which to launch your missile."
-        selection = gets.strip.to_i 
+        selection = give_up(gets.strip)
     end
     target_display
-    puts "Please select the target you want to nuke"
+    puts "Please select the target you want to nuke."
     targeting = give_up(gets.strip)
     until !Missile.all.find {|m| m.dropped_on == targeting}
-        puts "You have already killed everyone in that city"
-        puts "Please select the target you want to nuke"
+        puts "You have already killed everyone in that city."
+        puts "Please select the target you want to nuke."
         targeting = give_up(gets.strip)
     end
     missile_away(selection, targeting)
-    report_results(targeting)
+    score << report_results(targeting)
 end
 
 def missile_away(selection, targeting)
@@ -162,15 +162,19 @@ end
 def computer_launch(score)
     computer_cities = City.select_city_by_player('computer')
     user_cities = City.select_city_by_player('user')
+
     from_min = computer_cities.min.id
     from_max = computer_cities.max.id
     from_array = Missile.find_active_by_city_range(from_min, from_max).map {|m| m.city_id}
+    from_city = from_array.delete(from_array.sample)
+    
     to_min = user_cities.min.id
     to_max = user_cities.max.id
-    from_city = from_array.delete(from_array.sample)
-    to_city = rand(to_min..to_max)
+    to_array = (to_min..to_max).to_a
+    to_city = to_array.delete(to_array.sample)
     missile_away(from_city, to_city)
     score << report_results(to_city)
+    binding.pry
 end
 
 def report_results(target)
@@ -193,10 +197,12 @@ def usernum_missiles
     stockpile = Missile.where(["city_id BETWEEN ? AND ? AND active = ?", 1, 5, true])
     stockpile.length
 end
+
 def cpunum_missiles
     stockpile = Missile.where(["city_id BETWEEN ? AND ? AND active = ?", 6, 10, true])
     stockpile.length
 end 
+
 def gameover
     if usernum_missiles == 0
         puts "Would you like to play again?"
@@ -214,16 +220,16 @@ def gameover
         puts "#{usernum_missiles} left! Bunker down!"
     end
 end
+
 def final_score(user_kills)
     rows = current_score(user_kills)
 table = Terminal::Table.new :rows => rows
 end
+
 def cpufinal_score(cpu_kills)
     rows = current_score(cpu_kills)
 table = Terminal::Table.new :rows => rows
 end
-binding.pry 
-puts "done"
 
 def count_and_destroy_missiles(target)
     how_many = Missile.find_active_by_city(target).count
