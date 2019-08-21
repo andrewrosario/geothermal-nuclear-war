@@ -52,9 +52,10 @@ end
 
 def target_display
     big_array = list_cities("computer").collect do |city|
-        row_array(city)
+        array = row_array(city)
+        array << city.population
     end 
-    table = Terminal::Table.new :rows => big_array
+    table = Terminal::Table.new :headings => ['', 'City Name', 'Population'], :rows => big_array
     puts table
 end
 
@@ -99,6 +100,11 @@ def launch
     target_display
     puts "Please select the target you want to nuke"
     targeting = gets.strip.to_i
+    until !Missile.all.find {|m| m.dropped_on == targeting}
+        puts "You have already killed everyone in that city"
+        puts "Please select the target you want to nuke"
+        targeting = gets.strip.to_i
+    end
     missile_away(selection, targeting)
     report_results(targeting)
 end
@@ -134,7 +140,6 @@ def current_score(kills)
     puts kills.sum
 end
 
-build_missiles  
 binding.pry
 puts "done"
 
