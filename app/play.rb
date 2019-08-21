@@ -41,6 +41,7 @@ def ask_user
     puts "Please Enter Name"
     name = gets.strip 
     puts "Shall we play a game, #{name}?"
+    puts "You may quit playing at any time by typing 'q'."
     name 
 end 
 
@@ -113,7 +114,6 @@ def build_missiles
         create_missile(input)
         n -= 1 
     end 
-    user_display
 end
 
 def create_missile(input)
@@ -122,9 +122,8 @@ def create_missile(input)
 end
     
 def launch(user_kills)
-    user_display
     sleep(1)
-    puts "Now that all your missiles have been deployed, you may begin your attack."
+    user_display
     puts "Please select a city from which to launch your missile."
     selection = give_up(gets.strip)
     until Missile.all.find {|m| m.city_id == selection}
@@ -141,8 +140,7 @@ def launch(user_kills)
         targeting = give_up(gets.strip)
     end
     missile_away(selection, targeting)
-   user_kills << user_report_results(targeting)
-    
+    user_kills << user_report_results(targeting)
 end
 
 def missile_away(selection, targeting)
@@ -161,23 +159,32 @@ def computer_missiles
 end
 
 def computer_launch(score)
+    # puts "Computer attacking --------------------------------------------------------------------------------------"
     computer_cities = City.select_city_by_player('computer')
     user_cities = City.select_city_by_player('user')
 
     from_min = computer_cities.min.id
     from_max = computer_cities.max.id
     from_array = Missile.find_active_by_city_range(from_min, from_max).map {|m| m.city_id}
-    from_city = from_array.delete(from_array.sample)
     
     to_min = user_cities.min.id
     to_max = user_cities.max.id
     to_array = (to_min..to_max).to_a
-    to_city = to_array.delete(to_array.sample)
-    if from_array.length > 0 
+
+    # puts "To_Array is #{to_array}"
+    # puts "From_Array is #{from_array}"
+    if to_array.length > 0 && from_array.length > 0
+        # puts "IF!!!!"
+        from_city = from_array.delete(from_array.sample)
+        to_city = to_array.delete(to_array.sample)
+        until !Missile.all.find {|m| m.dropped_on == to_city}
+            to_city = to_array.delete(to_array.sample)
+        end
+        puts to_city
         missile_away(from_city, to_city)
         score << cpu_report_results(to_city)
     end
-   
+    # puts "End Attack---------------------------------------------------------------------------------------------------"
 end
 
 def user_report_results(target)
@@ -196,8 +203,13 @@ end
 
 
 def give_up(input)
-    input.to_s.downcase == 'q'? exit! : input.to_i
-    
+    if input.to_s.downcase == 'q'
+        puts "You won!"
+        puts "In Nuclear War, the only winning move is not to play."
+        exit!
+    else 
+        input.to_i
+    end
 end 
 
 def usernum_missiles
@@ -209,14 +221,15 @@ def cpunum_missiles
     stockpile = Missile.where(["city_id BETWEEN ? AND ? AND active = ?", 6, 10, true])
     stockpile.length
 end 
+
 def gameover(user_kills, cpu_kills)
     if usernum_missiles == 0 || cpunum_missiles == 0 
+        puts "You have missiles #{usernum_missiles} remaining and USSR has missiles remaining #{cpunum_missiles}"
         final_score(user_kills, cpu_kills)
-        
         puts "Would you like to play again?"
         answer = gets.strip 
-        until answer == "yes" || answer == "no" do
-            puts "please answer yes or no." 
+        until answer.downcase == "yes" || answer == "no" do
+            puts "Please answer yes or no." 
             answer = gets.strip
         end
         if answer == "yes"
@@ -229,15 +242,11 @@ def gameover(user_kills, cpu_kills)
     end
 end
 
-
-
 def final_score(user_kills, cpu_kills)
-    
     rows = [[user_kills.sum, cpu_kills.sum]]
     table = Terminal::Table.new :headings => ['Player Kills', 'CPU Kills'], 
     :rows => rows, :style => {:width => 80}
-
-puts table
+    puts table
 end
 
  
@@ -248,7 +257,7 @@ def count_and_destroy_missiles(target)
     how_many
 end
 
-
+# binding.pry
 
 def run 
     Missile.delete_all
@@ -259,9 +268,14 @@ def run
     display_city
     build_missiles
     computer_missiles
+    sleep(1)
+    puts "Now that all your missiles have been deployed, you may begin your attack."
     until gameover(user_kills, cpu_kills) == true 
+        puts "New Round!"
         launch(user_kills)
+        sleep(1)
         computer_launch(cpu_kills)
+        puts ''
     end
     final_score(user_kills, cpu_kills)
         
