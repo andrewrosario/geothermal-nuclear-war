@@ -67,7 +67,7 @@ end
 
 def display_city
     pic = "
-    __    __                        ___      _
+    __    __                         ___      _
     |  |  |  |       /|             |   |   _/ \_
     |  |  |  |   _  | |__           |   |_-/     \-  _ _
     |__|  |  |  |_| | | |  |/\_     |   |  \     /  |___|
@@ -123,7 +123,7 @@ def create_missile(input)
     Missile.new_missile(city_obj)
 end
     
-def launch
+def launch(user_kills)
     user_display
     puts "Please select a missile by city designation"
     selection = give_up(gets.strip)
@@ -141,7 +141,8 @@ def launch
         targeting = give_up(gets.strip)
     end
     missile_away(selection, targeting)
-    user_report_results(targeting)
+   user_kills << user_report_results(targeting)
+    
 end
 
 def missile_away(selection, targeting)
@@ -206,8 +207,8 @@ def cpunum_missiles
 end 
 def gameover(user_kills, cpu_kills)
     if usernum_missiles == 0 || cpunum_missiles == 0 
-        final_score(user_kills)
-        cpufinal_score(cpu_kills)
+        final_score(user_kills, cpu_kills)
+        
         puts "Would you like to play again?"
         answer = gets.strip 
         until answer == "yes" || answer == "no" do
@@ -226,14 +227,15 @@ end
 
 
 
-def final_score(user_kills)
-    rows = current_score(user_kills)
-table = Terminal::Table.new :rows => rows
+def final_score(user_kills, cpu_kills)
+    
+    rows = [[user_kills.sum, cpu_kills.sum]]
+    table = Terminal::Table.new :headings => ['Player Kills', 'CPU Kills'], 
+    :rows => rows, :style => {:width => 80}
+
+puts table
 end
-def cpufinal_score(cpu_kills)
-    rows = current_score(cpu_kills)
-table = Terminal::Table.new :rows => rows
-end
+
  
 
 def count_and_destroy_missiles(target)
@@ -254,9 +256,10 @@ def run
     build_missiles
     computer_missiles
     until gameover(user_kills, cpu_kills) == true 
-        launch 
+        launch(user_kills)
         computer_launch(cpu_kills)
     end
+    final_score(user_kills, cpu_kills)
         
 end
 
