@@ -198,17 +198,47 @@ end
 
 def give_up(input)
     input.to_s.downcase == 'q'? exit! : input.to_i
+    
 end 
 
-def num_missiles(city)
-
-    Missile.where(["city_id = ? AND active = ?", city.id, true]).first 
-
+def usernum_missiles
+    stockpile = Missile.where(["city_id BETWEEN ? AND ? AND active = ?", 1, 5, true])
+    stockpile.length
 end
-
-build_missiles
-launch
-binding.pry
+def cpunum_missiles
+    stockpile = Missile.where(["city_id BETWEEN ? AND ? AND active = ?", 6, 10, true])
+    stockpile.length
+end 
+def gameover
+    if usernum_missiles == 0
+        puts "Would you like to play again?"
+        answer = gets.strip 
+        until answer == "yes" || answer == "no" do
+            puts "please answer yes or no." 
+            answer = gets.strip
+        end
+        if answer == "yes"
+            return true 
+        else answer == "no"
+            exit!
+        end 
+    else
+        puts "#{usernum_missiles} left! Bunker down!"
+    end
+end
+def final_score(user_kills)
+    rows = current_score(user_kills)
+table = Terminal::Table.new :rows => rows
+end
+def cpufinal_score(cpu_kills)
+    rows = current_score(cpu_kills)
+table = Terminal::Table.new :rows => rows
+end
+binding.pry 
 puts "done"
+
+
+
+
 
     
