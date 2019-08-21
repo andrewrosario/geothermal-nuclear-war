@@ -159,16 +159,21 @@ def missile_away(selection, targeting)
 end
 
 def computer_missiles
-    min =
-    max = 
+    min = City.where("player = ?", "computer").min.id
+    max = City.where("player = ?", "computer").max.id
     5.times do
-        create_missile(rand(6..10))
+        create_missile(rand(min..max))
     end
 end
 
 def computer_launch(score)
-    from_city = rand(6..10)
-    to_city = rand(1..5)
+    from_min = City.where("player = ?", "computer").min.id
+    from_max = City.where("player = ?", "computer").max.id
+    from_array = Missile.where(['(city_id BETWEEN ? AND ?) AND (active = ?)' , from_min, from_max, true]).map {|m| m.city_id}
+    to_min = City.where("player = ?", "user").min.id
+    to_max = City.where("player = ?", "user").max.id
+    from_city = from_array.delete(from_array.sample)
+    to_city = rand(to_min..to_max)
     missile_away(from_city, to_city)
     score << report_results(to_city)
 end
