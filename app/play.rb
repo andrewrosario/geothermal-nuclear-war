@@ -2,7 +2,36 @@ require_relative "../config/environment"
 user_kills = 0 
 cpu_kills = 0
 def welcome 
-    puts "Welcome to War Games"
+    banner = "'
+
+
+    
+
+
+
+    . _..::__:  ,- -._       |7             _.__             
+    _.___ _ _<_>`!(._`.`-.    /        _._      _ ,_/     -._.---.-.__
+  .{     " " `-==,' ._\{  \  / {)     / _ >_-                  mt-2_
+   \_.:--.       `._ )`^- -      , [_/(                       __/- 
+          \              _L       oD_,--                 )     /. (|   
+           |           .'         _)_.\\._<> 6              _, /     
+           `.         /          [_/_ ` ` (                < }  )      
+            \\    .-. )          /   `-...' `:._          _)         
+     `        \  (  `(          /         `:\  > \  ,-^.  /          
+               ` _,   -        |           \`'   \|   ?_)  {\         
+                  `=.---.       `._._       ,'    "'   |   -  .        '
+                '   |    `-._        |     /           : <_|h--._      
+                    (        >       .     | ,           =.__. - \     
+                     `.     /        |     |{|               -. \     .
+                      |   '       '   \   / `' '            _     \     
+                ''    |  /             |_'    '            |  __  /     
+                      | |                               '  '-'   '-    \.
+   "                   |/     '                                   '     / '
+                                                                    
+                                                                       
+                    
+puts banner 
+puts "Welcome to War Games"
 end 
 
 def ask_user 
@@ -38,8 +67,30 @@ end
 def display(plyer)
 rows = assign_missiles(plyer)
 table = Terminal::Table.new :rows => rows
+pic = "
+ 
+
+
+ __    __                        ___      _
+|  |  |  |       /|             |   |   _/ \_
+|  |  |  |   _  | |__           |   |_-/     \-  _ _
+|__|  |  |  |_| | | |  |/\_     |   |  \     /  |___|
+|  |  |  |  | | __| |  |   |_   |   |   |___|   |   |
+|  |  |^ |  | ||  | |  |   | |__|   |   |   |   |   |
+|  |  |  |  | ||  | |  |   |/\  |   |   |   |   |   |
+~~~~~~~~~~~~~~~~~~~~~~~~~~~/  \~~~~~~~~~~~~~~~~~~~~~~~
+~ ~~  ~ ~~ ~~~ ~ ~ ~~ ~~ ~~ \   \__   ~  ~  ~~~~ ~~~ ~~
+~~ ~ ~ ~~~ ~~  ~~ ~~~~~~~~~~ \   \o\  ~~ ~ ~~~~ ~ ~ ~~~
+~ ~~~~~~~~ ~ ~ ~~ ~ ~ ~ ~ ~~~ \   \o\=   ~~ ~~  ~~ ~ ~~
+~ ~ ~ ~~~~~~~ ~  ~~ ~~ ~ ~~ ~ ~ ~~ ~ ~ ~~ ~~~ ~ ~ ~ ~ ~~~~"
+ 
+
+
+puts pic
 puts table 
 end 
+
+
 def target_display
 
         
@@ -69,6 +120,8 @@ def build_missiles(plyer)
 end
     
 def launch
+    
+       
     display("user")
     puts "Please select a missile by city designation"
     selection = gets.strip.to_i 
@@ -77,16 +130,13 @@ def launch
     targeting = gets.strip.to_i
     current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
       
-        current_missile.dropped_on = targeting
+       current_missile.dropped_on = targeting
        current_missile.active = false 
        current_missile.save
-    puts "Hasta La Vista Baby"
+        puts "Hasta La Vista Baby"
     # user_kills += City.where("id = ?", targeting)[0].population
     
-end
-welcome
-new_game(ask_user)
-build_missiles("user")
-launch
+end 
+launch 
 
     
