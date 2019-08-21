@@ -68,11 +68,12 @@ def build_missiles
         user_display
         puts "You have #{n} missiles to deploy"
         puts "Where would you like to deploy your missiles?"
-        input = gets.strip.to_i
-        until input.between?(1,5) 
+        input = give_up(gets.strip)
+        binding.pry
+        until input.between?(1,5)
             puts "You must select one of your own cities"
             puts "Where would you like to deploy your missiles?"
-            input = gets.strip.to_i
+            input = give_up(gets.strip)
         end
         create_missile(input)
         n -= 1 
@@ -91,7 +92,7 @@ end
 def launch
     user_display
     puts "Please select a missile by city designation"
-    selection = gets.strip.to_i 
+    selection = input = give_up(gets.strip)
     until Missile.all.find {|m| m.id == selection}
         puts "That city has no missiles."
         puts "Please select a city from which to launch your missile."
@@ -99,11 +100,11 @@ def launch
     end
     target_display
     puts "Please select the target you want to nuke"
-    targeting = gets.strip.to_i
+    targeting = input = give_up(gets.strip)
     until !Missile.all.find {|m| m.dropped_on == targeting}
         puts "You have already killed everyone in that city"
         puts "Please select the target you want to nuke"
-        targeting = gets.strip.to_i
+        targeting = input = give_up(gets.strip)
     end
     missile_away(selection, targeting)
     report_results(targeting)
@@ -140,7 +141,12 @@ def current_score(kills)
     puts kills.sum
 end
 
-binding.pry
+def give_up(input)
+    input.to_s.downcase == 'q'? exit! : input.to_i
+    
+end 
+
+build_missiles
 puts "done"
 
     
