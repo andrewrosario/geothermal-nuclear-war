@@ -1,6 +1,16 @@
 require_relative "../config/environment"
-user_kills = 0 
-cpu_kills = 0
+
+user_kills = []
+cpu_kills = []
+player_name = "Mr. President"
+
+old_logger = ActiveRecord::Base.logger
+ActiveRecord::Base.logger = nil
+
+def separate_comma(number)
+    number.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
+end
+
 def welcome 
     banner = "'
 
@@ -37,32 +47,31 @@ end
 def ask_user 
     puts "Please Enter Name"
     name = gets.strip 
-    puts "Shall we play a game,  #{name}..."
+    puts "Shall we play a game, #{name}..."
     name 
 end 
+
 def new_game(commander)
-    nuke =  Game.new(player_name: commander)
+    nuke = Game.new(player_name: commander)
+    player_name = commander
     nuke.save
 end 
 
-
 def list_cities(plyer)
    City.all.where("player = ?", plyer)
-#   usa2 = usa.collect {|city| city.name}
-#     puts usa2
 end 
 
+def row_array(city)
+    array = []
+    array << city.id
+    array << city.name 
+end
+
 def assign_missiles(plyer)
-    big_array = []
-    
     big_array = list_cities(plyer).collect do |city| 
-        array = [] 
-        array << city.id
-        array << city.name 
-        array << Missile.where(["city_id = ? AND active = ?", city, true]).count
-        
+        array = row_array(city)
+        array << Missile.where(["city_id = ? AND active = ?", city, true]).count 
     end 
-    
 end
 def display(plyer)
 rows = assign_missiles(plyer)
@@ -91,52 +100,115 @@ puts table
 end 
 
 
-def target_display
+def user_display
+    rows = assign_missiles("user")
+    table = Terminal::Table.new :headings => ['', 'City Name', 'Number of Missiles'], :rows => rows
+    puts table 
+end 
 
-        
-        big_array = list_cities("computer").collect do |city|
-            array = []
-            array << city.id
-            array << city.name 
-        end 
-    table = Terminal::Table.new :rows => big_array
-        puts table
-end
-def build_missiles(plyer)
-    n = 5 
-    while n > 0 
-        display(plyer)
-        puts "You have #{n} missiles to deploy"
-        puts "where would you like to deploy your missiles"
-        input = gets.strip.to_i #make sure to add a parameter that limits the user only selecting 1-5 for both cities and missiles August 20end
-        city_obj = City.all.find {|city| city.id == input}
-        new_missile = Missile.new
-        new_missile.city = city_obj
-        new_missile.active = true
-        new_missile.save
-        n -= 1 
-        
+def target_display
+    big_array = list_cities("computer").collect do |city|
+        array = row_array(city)
+        array << city.population
     end 
+    table = Terminal::Table.new :headings => ['', 'City Name', 'Population'], :rows => big_array
+    puts table
+end
+
+def build_missiles
+    n = 5 
+    puts "You are now able to create your nuclear arsenal."
+    puts "You will build an ICBM by assigning that missile to a city." 
+    puts "Select a city by entering the number associated with that city."
+    while n > 0 
+        user_display
+        puts "You have #{n} missiles to deploy"
+        puts "Where would you like to deploy your missiles?"
+        input = give_up(gets.strip)
+        until input.between?(1,5)
+            puts "You must select one of your own cities"
+            puts "Where would you like to deploy your missiles?"
+            input = give_up(gets.strip)
+        end
+        create_missile(input)
+        n -= 1 
+    end 
+    user_display
+end
+
+def create_missile(input)
+    city_obj = City.all.find {|city| city.id == input}
+    new_missile = Missile.new
+    new_missile.city = city_obj
+    new_missile.active = true
+    new_missile.save
 end
     
 def launch
-    
-       
-    display("user")
+    user_display
     puts "Please select a missile by city designation"
-    selection = gets.strip.to_i 
+    selection = input = give_up(gets.strip)
+    until Missile.all.find {|m| m.id == selection}
+        puts "That city has no missiles."
+        puts "Please select a city from which to launch your missile."
+        selection = gets.strip.to_i 
+    end
     target_display
     puts "Please select the target you want to nuke"
-    targeting = gets.strip.to_i
+    targeting = input = give_up(gets.strip)
+    until !Missile.all.find {|m| m.dropped_on == targeting}
+        puts "You have already killed everyone in that city"
+        puts "Please select the target you want to nuke"
+        targeting = input = give_up(gets.strip)
+    end
+    missile_away(selection, targeting)
+    report_results(targeting)
+end
+
+def missile_away(selection, targeting)
     current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
-      
-       current_missile.dropped_on = targeting
-       current_missile.active = false 
-       current_missile.save
-        puts "Hasta La Vista Baby"
-    # user_kills += City.where("id = ?", targeting)[0].population
-    
+    current_missile.dropped_on = targeting
+    current_missile.active = false 
+    current_missile.save
+end
+
+def computer_missiles
+    5.times do
+        create_missile(rand(6..10))
+    end
+end
+
+def computer_launch(score)
+    from_city = rand(6..10)
+    to_city = rand(1..5)
+    missile_away(from_city, to_city)
+    score << report_results(to_city)
+end
+
+def report_results(target)
+    city = City.where("id = ?", target).first
+    puts "You have successfully bombed #{city.name}."
+    puts "You have killed #{separate_comma(city.population)} people."
+    city.population
+end
+
+def current_score(kills)
+    puts kills.sum
+end
+
+def give_up(input)
+    input.to_s.downcase == 'q'? exit! : input.to_i
 end 
-launch 
+
+def num_missiles(city)
+
+    Missile.where(["city_id = ? AND active = ?", city.id, true]).first 
+
+end
+
+build_missiles
+launch
+binding.pry
+puts "done"
 
     
