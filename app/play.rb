@@ -52,20 +52,16 @@ def new_game(commander)
     nuke.save
 end 
 
-def list_cities(plyer)
-   City.all.where("player = ?", plyer)
-end 
-
 def row_array(city)
     array = []
     array << city.id
     array << city.name 
 end
 
-def assign_missiles(plyer)
-    big_array = list_cities(plyer).collect do |city| 
+def count_missiles_by_city(plyer)
+    big_array = City.list_cities(plyer).collect do |city| 
         array = row_array(city)
-        array << Missile.where(["city_id = ? AND active = ?", city, true]).count 
+        array << Missile.find_active_by_city(city).count 
     end 
 end
 
@@ -87,13 +83,13 @@ def display_city
 end
 
 def user_display
-    rows = assign_missiles("user")
+    rows = count_missiles_by_city("user")
     table = Terminal::Table.new :headings => ['', 'City Name', 'Number of Missiles'], :rows => rows
     puts table 
 end 
 
 def target_display
-    big_array = list_cities("computer").collect do |city|
+    big_array = City.list_cities("computer").collect do |city|
         array = row_array(city)
         array << city.population
     end 
@@ -123,17 +119,14 @@ def build_missiles
 end
 
 def create_missile(input)
-    city_obj = City.all.find {|city| city.id == input}
-    new_missile = Missile.new
-    new_missile.city = city_obj
-    new_missile.active = true
-    new_missile.save
+    city_obj = City.find_by_id(input)
+    Missile.new_missile(city_obj)
 end
     
 def launch
     user_display
     puts "Please select a missile by city designation"
-    selection = input = give_up(gets.strip)
+    selection = give_up(gets.strip)
     until Missile.all.find {|m| m.id == selection}
         puts "That city has no missiles."
         puts "Please select a city from which to launch your missile."
@@ -141,37 +134,39 @@ def launch
     end
     target_display
     puts "Please select the target you want to nuke"
-    targeting = input = give_up(gets.strip)
+    targeting = give_up(gets.strip)
     until !Missile.all.find {|m| m.dropped_on == targeting}
         puts "You have already killed everyone in that city"
         puts "Please select the target you want to nuke"
-        targeting = input = give_up(gets.strip)
+        targeting = give_up(gets.strip)
     end
     missile_away(selection, targeting)
     report_results(targeting)
 end
 
 def missile_away(selection, targeting)
-    current_missile = Missile.where(["city_id = ? AND active = ?", selection, true]).first 
+    current_missile = Missile.find_active_by_city(selection).first 
     current_missile.dropped_on = targeting
     current_missile.active = false 
     current_missile.save
 end
 
 def computer_missiles
-    min = City.where("player = ?", "computer").min.id
-    max = City.where("player = ?", "computer").max.id
+    min = City.select_city_by_player('computer').min.id
+    max = City.select_city_by_player('computer').max.id
     5.times do
         create_missile(rand(min..max))
     end
 end
 
 def computer_launch(score)
-    from_min = City.where("player = ?", "computer").min.id
-    from_max = City.where("player = ?", "computer").max.id
-    from_array = Missile.where(['(city_id BETWEEN ? AND ?) AND (active = ?)' , from_min, from_max, true]).map {|m| m.city_id}
-    to_min = City.where("player = ?", "user").min.id
-    to_max = City.where("player = ?", "user").max.id
+    computer_cities = City.select_city_by_player('computer')
+    user_cities = City.select_city_by_player('user')
+    from_min = computer_cities.min.id
+    from_max = computer_cities.max.id
+    from_array = Missile.find_active_by_city_range(from_min, from_max).map {|m| m.city_id}
+    to_min = user_cities.min.id
+    to_max = user_cities.max.id
     from_city = from_array.delete(from_array.sample)
     to_city = rand(to_min..to_max)
     missile_away(from_city, to_city)
@@ -194,8 +189,8 @@ def give_up(input)
 end 
 
 def count_and_destroy_missiles(target)
-    how_many = Missile.where(["city_id = ? AND active = ?", target, true]).count
-    Missile.where(["city_id = ? AND active = ?", target, true]).update_all(active: false)
+    how_many = Missile.find_active_by_city(target).count
+    Missile.find_active_by_city(target).update_all(active: false)
     how_many
 end
 
