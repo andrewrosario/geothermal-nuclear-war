@@ -27,9 +27,9 @@ def welcome
                         (        >       .     | ,           =.__. - \     
                         `.     /        |     |{|               -. \     .
                         |   '       '   \   / `' '            _     \     
-                    ''    |  /             |_'    '            |  __  /     
+                    ''  |  /             |_'    '            |  __  /     
                         | |                               '  '-'   '-    \.
-    "                   |/     '                                   '     / '
+                        |/     '                                   '     / '
                                                                         
                                                                         
                         
@@ -65,7 +65,7 @@ end
 
 def display_city
     pic = "
-    __    __                        ___      _
+    __    __                         ___      _
     |  |  |  |       /|             |   |   _/ \_
     |  |  |  |   _  | |__           |   |_-/     \-  _ _
     |__|  |  |  |_| | | |  |/\_     |   |  \     /  |___|
@@ -121,7 +121,7 @@ def create_missile(input)
     Missile.new_missile(city_obj)
 end
     
-def launch(score)
+def launch(user_kills)
     user_display
     sleep(1)
     puts "Now that all your missiles have been deployed, you may begin your attack."
@@ -141,7 +141,8 @@ def launch(score)
         targeting = give_up(gets.strip)
     end
     missile_away(selection, targeting)
-    score << report_results(targeting)
+   user_kills << user_report_results(targeting)
+    
 end
 
 def missile_away(selection, targeting)
@@ -172,21 +173,27 @@ def computer_launch(score)
     to_max = user_cities.max.id
     to_array = (to_min..to_max).to_a
     to_city = to_array.delete(to_array.sample)
-    missile_away(from_city, to_city)
-    score << report_results(to_city)
-    binding.pry
+    if from_array.length > 0 
+        missile_away(from_city, to_city)
+        score << cpu_report_results(to_city)
+    end
+   
 end
 
-def report_results(target)
+def user_report_results(target)
     city = City.where("id = ?", target).first
     puts "You have successfully bombed #{city.name}."
     puts "You have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
     city.population
 end
 
-def current_score(kills)
-    puts kills.sum
+def cpu_report_results(target)
+    city = City.where("id = ?", target).first
+    puts "The USSR has bombed #{city.name}."
+    puts "They have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
+    city.population
 end
+
 
 def give_up(input)
     input.to_s.downcase == 'q'? exit! : input.to_i
@@ -202,9 +209,10 @@ def cpunum_missiles
     stockpile = Missile.where(["city_id BETWEEN ? AND ? AND active = ?", 6, 10, true])
     stockpile.length
 end 
-
-def gameover
-    if usernum_missiles == 0
+def gameover(user_kills, cpu_kills)
+    if usernum_missiles == 0 || cpunum_missiles == 0 
+        final_score(user_kills, cpu_kills)
+        
         puts "Would you like to play again?"
         answer = gets.strip 
         until answer == "yes" || answer == "no" do
@@ -217,19 +225,22 @@ def gameover
             exit!
         end 
     else
-        puts "#{usernum_missiles} left! Bunker down!"
+        puts "You have #{usernum_missiles} left! DEFCON 1!"
     end
 end
 
-def final_score(user_kills)
-    rows = current_score(user_kills)
-table = Terminal::Table.new :rows => rows
+
+
+def final_score(user_kills, cpu_kills)
+    
+    rows = [[user_kills.sum, cpu_kills.sum]]
+    table = Terminal::Table.new :headings => ['Player Kills', 'CPU Kills'], 
+    :rows => rows, :style => {:width => 80}
+
+puts table
 end
 
-def cpufinal_score(cpu_kills)
-    rows = current_score(cpu_kills)
-table = Terminal::Table.new :rows => rows
-end
+ 
 
 def count_and_destroy_missiles(target)
     how_many = Missile.find_active_by_city(target).count
@@ -238,7 +249,24 @@ def count_and_destroy_missiles(target)
 end
 
 
-binding.pry
-puts "done"
+
+def run 
+    Missile.delete_all
+    user_kills = []
+    cpu_kills = []
+    welcome 
+    new_game(ask_user)
+    display_city
+    build_missiles
+    computer_missiles
+    until gameover(user_kills, cpu_kills) == true 
+        launch(user_kills)
+        computer_launch(cpu_kills)
+    end
+    final_score(user_kills, cpu_kills)
+        
+end
+
+run 
 
     
