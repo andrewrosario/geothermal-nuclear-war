@@ -14,34 +14,29 @@ end
 def welcome 
     banner = "'
 
-
-    
-
-
-
-    . _..::__:  ,- -._       |7             _.__             
-    _.___ _ _<_>`!(._`.`-.    /        _._      _ ,_/     -._.---.-.__
-  .{     " " `-==,' ._\{  \  / {)     / _ >_-                  mt-2_
-   \_.:--.       `._ )`^- -      , [_/(                       __/- 
-          \              _L       oD_,--                 )     /. (|   
-           |           .'         _)_.\\._<> 6              _, /     
-           `.         /          [_/_ ` ` (                < }  )      
-            \\    .-. )          /   `-...' `:._          _)         
-     `        \  (  `(          /         `:\  > \  ,-^.  /          
-               ` _,   -        |           \`'   \|   ?_)  {\         
-                  `=.---.       `._._       ,'    "'   |   -  .        '
-                '   |    `-._        |     /           : <_|h--._      
-                    (        >       .     | ,           =.__. - \     
-                     `.     /        |     |{|               -. \     .
-                      |   '       '   \   / `' '            _     \     
-                ''    |  /             |_'    '            |  __  /     
-                      | |                               '  '-'   '-    \.
-   "                   |/     '                                   '     / '
-                                                                    
-                                                                       
-                    
-puts banner 
-puts "Welcome to War Games"
+        . _..::__:  ,- -._       |7             _.__             
+        _.___ _ _<_>`!(._`.`-.    /        _._      _ ,_/     -._.---.-.__
+    .{     " " `-==,' ._\{  \  / {)     / _ >_-                  mt-2_
+    \_.:--.       `._ )`^- -      , [_/(                       __/- 
+            \              _L       oD_,--                 )     /. (|   
+            |           .'         _)_.\\._<> 6              _, /     
+            `.         /          [_/_ ` ` (                < }  )      
+                \\    .-. )          /   `-...' `:._          _)         
+        `        \  (  `(          /         `:\  > \  ,-^.  /          
+                ` _,   -        |           \`'   \|   ?_)  {\         
+                    `=.---.       `._._       ,'    "'   |   -  .        '
+                    '   |    `-._        |     /           : <_|h--._      
+                        (        >       .     | ,           =.__. - \     
+                        `.     /        |     |{|               -. \     .
+                        |   '       '   \   / `' '            _     \     
+                    ''    |  /             |_'    '            |  __  /     
+                        | |                               '  '-'   '-    \.
+    "                   |/     '                                   '     / '
+                                                                        
+                                                                        
+                        
+    puts banner 
+    puts "Welcome to War Games"
 end 
 
 def ask_user 
@@ -73,32 +68,23 @@ def assign_missiles(plyer)
         array << Missile.where(["city_id = ? AND active = ?", city, true]).count 
     end 
 end
-def display(plyer)
-rows = assign_missiles(plyer)
-table = Terminal::Table.new :rows => rows
-pic = "
- 
 
-
- __    __                        ___      _
-|  |  |  |       /|             |   |   _/ \_
-|  |  |  |   _  | |__           |   |_-/     \-  _ _
-|__|  |  |  |_| | | |  |/\_     |   |  \     /  |___|
-|  |  |  |  | | __| |  |   |_   |   |   |___|   |   |
-|  |  |^ |  | ||  | |  |   | |__|   |   |   |   |   |
-|  |  |  |  | ||  | |  |   |/\  |   |   |   |   |   |
-~~~~~~~~~~~~~~~~~~~~~~~~~~~/  \~~~~~~~~~~~~~~~~~~~~~~~
-~ ~~  ~ ~~ ~~~ ~ ~ ~~ ~~ ~~ \   \__   ~  ~  ~~~~ ~~~ ~~
-~~ ~ ~ ~~~ ~~  ~~ ~~~~~~~~~~ \   \o\  ~~ ~ ~~~~ ~ ~ ~~~
-~ ~~~~~~~~ ~ ~ ~~ ~ ~ ~ ~ ~~~ \   \o\=   ~~ ~~  ~~ ~ ~~
-~ ~ ~ ~~~~~~~ ~  ~~ ~~ ~ ~~ ~ ~ ~~ ~ ~ ~~ ~~~ ~ ~ ~ ~ ~~~~"
- 
-
-
-puts pic
-puts table 
-end 
-
+def display_city
+    pic = "
+    __    __                        ___      _
+    |  |  |  |       /|             |   |   _/ \_
+    |  |  |  |   _  | |__           |   |_-/     \-  _ _
+    |__|  |  |  |_| | | |  |/\_     |   |  \     /  |___|
+    |  |  |  |  | | __| |  |   |_   |   |   |___|   |   |
+    |  |  |^ |  | ||  | |  |   | |__|   |   |   |   |   |
+    |  |  |  |  | ||  | |  |   |/\  |   |   |   |   |   |
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~/  \~~~~~~~~~~~~~~~~~~~~~~~
+    ~ ~~  ~ ~~ ~~~ ~ ~ ~~ ~~ ~~ \   \__   ~  ~  ~~~~ ~~~ ~~
+    ~~ ~ ~ ~~~ ~~  ~~ ~~~~~~~~~~ \   \o\  ~~ ~ ~~~~ ~ ~ ~~~
+    ~ ~~~~~~~~ ~ ~ ~~ ~ ~ ~ ~ ~~~ \   \o\=   ~~ ~~  ~~ ~ ~~
+    ~ ~ ~ ~~~~~~~ ~  ~~ ~~ ~ ~~ ~ ~ ~~ ~ ~ ~~ ~~~ ~ ~ ~ ~ ~~~~"
+    puts pic
+end
 
 def user_display
     rows = assign_missiles("user")
@@ -173,6 +159,8 @@ def missile_away(selection, targeting)
 end
 
 def computer_missiles
+    min =
+    max = 
     5.times do
         create_missile(rand(6..10))
     end
@@ -188,7 +176,7 @@ end
 def report_results(target)
     city = City.where("id = ?", target).first
     puts "You have successfully bombed #{city.name}."
-    puts "You have killed #{separate_comma(city.population)} people."
+    puts "You have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
     city.population
 end
 
@@ -200,14 +188,13 @@ def give_up(input)
     input.to_s.downcase == 'q'? exit! : input.to_i
 end 
 
-def num_missiles(city)
-
-    Missile.where(["city_id = ? AND active = ?", city.id, true]).first 
-
+def count_and_destroy_missiles(target)
+    how_many = Missile.where(["city_id = ? AND active = ?", target, true]).count
+    Missile.where(["city_id = ? AND active = ?", target, true]).update_all(active: false)
+    how_many
 end
 
-build_missiles
-launch
+
 binding.pry
 puts "done"
 
