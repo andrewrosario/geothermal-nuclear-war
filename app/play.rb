@@ -1,7 +1,9 @@
 require_relative "../config/environment"
+
 user_kills = []
 cpu_kills = []
 player_name = "Mr. President"
+
 old_logger = ActiveRecord::Base.logger
 ActiveRecord::Base.logger = nil
 
@@ -16,7 +18,7 @@ end
 def ask_user 
     puts "Please Enter Name"
     name = gets.strip 
-    puts "Shall we play a game,  #{name}..."
+    puts "Shall we play a game, #{name}..."
     name 
 end 
 
@@ -37,7 +39,6 @@ def row_array(city)
 end
 
 def assign_missiles(plyer)
-    big_array = []
     big_array = list_cities(plyer).collect do |city| 
         array = row_array(city)
         array << Missile.where(["city_id = ? AND active = ?", city, true]).count 
@@ -69,7 +70,6 @@ def build_missiles
         puts "You have #{n} missiles to deploy"
         puts "Where would you like to deploy your missiles?"
         input = give_up(gets.strip)
-        binding.pry
         until input.between?(1,5)
             puts "You must select one of your own cities"
             puts "Where would you like to deploy your missiles?"
@@ -143,10 +143,17 @@ end
 
 def give_up(input)
     input.to_s.downcase == 'q'? exit! : input.to_i
-    
 end 
 
+def num_missiles(city)
+
+    Missile.where(["city_id = ? AND active = ?", city.id, true]).first 
+
+end
+
 build_missiles
+launch
+binding.pry
 puts "done"
 
     
