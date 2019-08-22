@@ -116,7 +116,7 @@ end
 def target_display
     big_array = City.list_cities("computer").collect do |city|
         array = row_array(city)
-        array << city.population
+        array << separate_comma(city.population)
     end 
     table = Terminal::Table.new :headings => ['', 'City Name', 'Population'], :rows => big_array
     puts table
@@ -132,7 +132,7 @@ def build_missiles
         puts "You have #{n} missiles to deploy"
         puts "Where would you like to deploy your missiles?"
         input = give_up(gets.strip)
-        until input.between?(1,5)
+        until input.between?(City.id_array('user').min, City.id_array('user').max)
             puts "You must select one of your own cities"
             puts "Where would you like to deploy your missiles?"
             input = give_up(gets.strip)
@@ -152,7 +152,7 @@ def launch(user_kills)
     user_display
     puts "Please select a city from which to launch your missile."
     selection = give_up(gets.strip)
-    until Missile.all.find {|m| m.city_id == selection}
+    until Missile.all.find {|m| m.city_id == selection && m.active == true && m.game_id == Game.last.id}
         puts "That city has no missiles."
         puts "Please select a city from which to launch your missile."
         selection = give_up(gets.strip)
@@ -160,7 +160,7 @@ def launch(user_kills)
     target_display
     puts "Please select the target you want to nuke."
     targeting = give_up(gets.strip)
-    until !Missile.all.find {|m| m.dropped_on == targeting}
+    until Missile.find_by_dropped_on(targeting).length == 0
         puts "You have already killed everyone in that city."
         puts "Please select the target you want to nuke."
         targeting = give_up(gets.strip)
@@ -176,9 +176,11 @@ def missile_away(selection, targeting)
     current_missile.save
 end
 
+
+
 def computer_missiles
-    min = City.select_city_by_player('computer').min.id
-    max = City.select_city_by_player('computer').max.id
+    min = City.id_array('computer').min
+    max = City.id_array('computer').max
     5.times do
         create_missile(rand(min..max))
     end
@@ -186,15 +188,12 @@ end
 
 def computer_launch(score)
     # puts "Computer attacking --------------------------------------------------------------------------------------"
-    computer_cities = City.select_city_by_player('computer')
-    user_cities = City.select_city_by_player('user')
-
-    from_min = computer_cities.min.id
-    from_max = computer_cities.max.id
+    from_min = City.id_array('computer').min
+    from_max = City.id_array('computer').max
     from_array = Missile.find_active_by_city_range(from_min, from_max).map {|m| m.city_id}
     
-    to_min = user_cities.min.id
-    to_max = user_cities.max.id
+    to_min = City.id_array('user').min
+    to_max = City.id_array('user').max
     to_array = (to_min..to_max).to_a
 
     # puts "To_Array is #{to_array}"
@@ -203,9 +202,10 @@ def computer_launch(score)
         # puts "IF!!!!"
         from_city = from_array.delete(from_array.sample)
         to_city = to_array.delete(to_array.sample)
-        until !Missile.all.find {|m| m.dropped_on == to_city}
+        until !Missile.all.find {|m| m.dropped_on == to_city && m.game_id == Game.last.id}
             to_city = to_array.delete(to_array.sample)
         end
+        # puts 'end until'
         puts to_city
         missile_away(from_city, to_city)
         score << cpu_report_results(to_city)
@@ -239,12 +239,12 @@ def give_up(input)
 end 
 
 def usernum_missiles
-    stockpile = Missile.where(["city_id BETWEEN ? AND ? AND active = ?", 1, 5, true])
+    stockpile = Missile.find_active_by_city_range(City.id_array('user').min, City.id_array('user').max)
     stockpile.length
 end
 
 def cpunum_missiles
-    stockpile = Missile.where(["city_id BETWEEN ? AND ? AND active = ?", 6, 10, true])
+    stockpile = Missile.find_active_by_city_range(City.id_array('computer').min, City.id_array('computer').max)
     stockpile.length
 end 
 
@@ -282,13 +282,11 @@ def gameover(user_kills, cpu_kills)
 end
 
 def final_score(user_kills, cpu_kills)
-    rows = [[user_kills.sum, cpu_kills.sum]]
+    rows = [[separate_comma(user_kills.sum), separate_comma(cpu_kills.sum)]]
     table = Terminal::Table.new :headings => ['Player Kills', 'CPU Kills'], 
     :rows => rows, :style => {:width => 80}
     puts table
 end
-
- 
 
 def count_and_destroy_missiles(target)
     how_many = Missile.find_active_by_city(target).count
@@ -296,10 +294,7 @@ def count_and_destroy_missiles(target)
     how_many
 end
 
-# binding.pry
-
 def run 
-    Missile.delete_all
     user_kills = []
     cpu_kills = []
     welcome 
@@ -320,6 +315,7 @@ def run
         
 end
 
+binding.pry
 run 
 
     
