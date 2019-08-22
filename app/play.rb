@@ -229,7 +229,6 @@ def computer_launch(score)
             to_city = to_array.delete(to_array.sample)
         end
         # puts 'end until'
-        puts to_city
         missile_away(from_city, to_city)
         score << cpu_report_results(to_city)
         sleep(3)
@@ -325,8 +324,6 @@ end
 def gameover(user_kills, cpu_kills)
     
     overhead = "
-
-
                                                                 ██████╗  █████╗ ███╗   ███╗███████╗     ██████╗ ██╗   ██╗███████╗██████╗ 
                                                                 ██╔════╝ ██╔══██╗████╗ ████║██╔════╝    ██╔═══██╗██║   ██║██╔════╝██╔══██╗
                                                                 ██║  ███╗███████║██╔████╔██║█████╗      ██║   ██║██║   ██║█████╗  ██████╔╝
@@ -386,8 +383,7 @@ def run
         computer_launch(cpu_kills)
         puts ''
     end
-    final_score(user_kills, cpu_kills)
-        
+    final_score(user_kills, cpu_kills)   
 end
 
 
