@@ -11,16 +11,6 @@ end
 
 def welcome 
     banner = 
-  
-                                                                              
-
-
-
-
-
-
-
-    
   "       
                                 000000101101010101010101010101101011000101101010101011000101010101010101010101001010101010110101010101010101010101010101001010110101 
                                 010010                             ~+? ?~ ~?~?++~?~~~               ~~        +                                               010101
@@ -103,7 +93,8 @@ def display_city
     ~ ~~  ~ ~~ ~~~ ~ ~ ~~ ~~ ~~ \   \__   ~  ~  ~~~~ ~~~ ~~
     ~~ ~ ~ ~~~ ~~  ~~ ~~~~~~~~~~ \   \o\  ~~ ~ ~~~~ ~ ~ ~~~
     ~ ~~~~~~~~ ~ ~ ~~ ~ ~ ~ ~ ~~~ \   \o\=   ~~ ~~  ~~ ~ ~~
-    ~ ~ ~ ~~~~~~~ ~  ~~ ~~ ~ ~~ ~ ~ ~~ ~ ~ ~~ ~~~ ~ ~ ~ ~ ~~~~"
+    ~ ~ ~ ~~~~~~~ ~  ~~ ~~ ~ ~~ ~ ~ ~~ ~ ~ ~~ ~~~ ~ ~ ~ ~ ~~~~
+    "
     puts pic
 end
 
@@ -117,8 +108,14 @@ def target_display
     big_array = City.list_cities("computer").collect do |city|
         array = row_array(city)
         array << separate_comma(city.population)
+        # binding.pry
+        if Missile.find_by_dropped_on(city.id) != []
+            array << "Destroyed"
+        else
+            array << ""
+        end
     end 
-    table = Terminal::Table.new :headings => ['', 'City Name', 'Population'], :rows => big_array
+    table = Terminal::Table.new :headings => ['', 'City Name', 'Population', 'Status'], :rows => big_array
     puts table
 end
 
@@ -146,6 +143,16 @@ def create_missile(input)
     city_obj = City.find_by_id(input)
     Missile.new_missile(city_obj)
 end
+
+def limit_input(input, player)
+    min = City.id_array(player).min
+    max = City.id_array(player).max
+    until input.between?(min..max)
+        puts "Invalid selection. Try again."
+        input = give_up(gets.strip)
+    end
+    input
+end
     
 def launch(user_kills)
     sleep(1)
@@ -158,10 +165,11 @@ def launch(user_kills)
         selection = give_up(gets.strip)
     end
     target_display
+
     puts "Please select the target you want to nuke."
     targeting = give_up(gets.strip)
-    until Missile.find_by_dropped_on(targeting).length == 0
-        puts "You have already killed everyone in that city."
+    until Missile.find_by_dropped_on(targeting).length == 0 && targeting.between?(City.id_array('computer').min, City.id_array('computer').max)
+        puts "You have already killed everyone in that city or your input is invalid."
         puts "Please select the target you want to nuke."
         targeting = give_up(gets.strip)
     end
@@ -217,6 +225,9 @@ def user_report_results(target)
     city = City.where("id = ?", target).first
     puts "You have successfully bombed #{city.name}."
     puts "You have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
+    if target == 4
+        puts "...and 3 Walmarts."
+    end
     city.population
 end
 
