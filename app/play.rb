@@ -1,4 +1,5 @@
 require_relative "../config/environment"
+require_relative 'ascii-images'
 
 cpu_kills = []
 user_kills = []
@@ -8,57 +9,19 @@ ActiveRecord::Base.logger = nil
 def separate_comma(number)
     number.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
 end
+<<<<<<< HEAD
+
+def music 
+    pid = fork{ exec 'afplay', "balloonsong.mp3" }
+=======
 def music 
     
       pid =  ["balloonsong.mp3", "madworld.mp3"].sample
         fork{ exec 'afplay', pid}
        
+>>>>>>> origin/master
 end 
 
-
-
- def banner 
-    banner = 
-  "       
-                  000000101101010101010101010101101011000101101010101011000101010101010101010101001010101010110101010101010101010101010101001010110101        
-                  010010                             ~+? ?~ ~?~?++~?~~~               ~~        +                                               010101          
-                  101010                    ~~  :~:~+ ~  ?++++++++++,        ~+         ~:      ~:?:~        ~                                  010010            
-                  100101                 :~,++~ ~ ?,++.     ?+++++~                   ++   +   +++++++++++?~ ~++~       ~                       101010              
-                  010110     ?+++++++++?+?+?+?+:+~+ ~ ?+~  ,+++              ~++++++  ++++++++?++++++++++++++++++++++++++++~~                   101001                
-                  010110  +++++++?++++++?~?++++    ~+~:    ++              ~?+~+++++++++++++++++++++++++++++++++++++++++++++                    101001                  
-                  101011 :: ~  ~? +++++++++++~    ++,:~                 +  ? + ~??+++++++++++++++++++++++++++++++++     +~                      011001                   
-                  010101        ~?++++++++?+++++~+++++?               :~+   : +~?+~?++++++++++++ +++++++++~?+++++++      +~                     101010         
-                  101011        :++++++++++++++++++??+ ~               ~:+++? ++,++?++++ ?  +++++++:++~++++++++++++++ ~   ~                     111000           
-                  101010        :++++++++++  ++++?++~  ~                ?++ ? +++?~+~?+?~ ++,++++~,+++ ++++++++:+++? + ~                        101001             
-                  011001       ?+++++++++++:+ ~++                     ++~?  +~,+++      :~++?+ + ~~:+++++++++ +++++?~  ++                       000000               
-                  010110       ++++++++++++++++:                     ~+++~ ~  ~~,:++++++~ ~++++ + ?++++++++++++++  ?+   +                       110100               
-                  101010       +++++++++++++++~                       +:?+?,     : +~+++~+++++?++?? +++++++++++++++ ?  ++                       101010            
-                  010101        ,   ++++++++                         ?+~+++?++ ~+: ~~~++++++++++~++++++++++++++++++   :                         001010       
-                  010101        +?++++     +                      ~  :++++++++++++++~++++? ++++++ +++++ ??+~+++++++                             100010         
-                  010110          +++:       ~                     +?+++++++ ?+++++++ +++++     ~+++++++++?~++++++~+                            100101           
-                  011010           ++?  +   ~                     ~?+++++ +++++++~++++ ++++?+~     ++++:  ++ +?                                 101001             
-                  010101            ~??+~                         :?++ ?+++++++++++++++~+~+:       ++++    ~?+ ~    ?                           110101               
-                  010110                ~+    ~                   , ?+?+++++++?+ +++++++~           ++       ~+~    ~:                          110010                 
-                  010101                  :~ ???+?                 , ~+~ ++++?+~+?+++++?~++         ?+      ?      ~ ~~                         101010                    
-                  001011                    ++++++ ~:                +:    ++++~+  +++++?+                 ?++    ~?~                           101011                
-                  011010                   ~+++? ?++++                      ~~+++++ ++++~                   :+, ?:??  ~+                        010101           
-                  010101                   + + +++++??++~~                   :++++?:: ?~                     ?+~ +++? ~  ~+~  ~~                101010             
-                  010101                   ++++++++++++++++?                 +~?+++++++                        +    ~    : +?+~                 101001               
-                  110001                    ++ +~++++++++++~                 ?++:?++~?+                              ~        +:                101010                 
-                  010101                     ++ +?~+++++++                   +++++++ ++   +                           ~ +?                  ~   000000                   
-                  100110                       ++++~++++++                   +~+? +???  ?+                           +++++??+           ~       000100                     
-                  010101                       ?++?+?++++?                   ~++++~++   ++                        ++++++++++++                  001001              
-                  010101                       ++++++?+                       +:++++~   +~                       ++++++++++++++                 100010         
-                  111010                       ++++ ██╗    ██╗ █████╗ ██████╗      ██████╗  █████╗ ███╗   ███╗███████╗███████╗                  101001           
-                  000101                       +++  ██║    ██║██╔══██╗██╔══██╗    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝██╔════╝                  101001             
-                  101010                       ++   ██║ █╗ ██║███████║██████╔╝    ██║  ███╗███████║██╔████╔██║█████╗  ███████╗                  110010               
-                  101010                       +++  ██║███╗██║██╔══██║██╔══██╗    ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ╚════██║                  101000                 
-                  101011                       ++   ╚███╔███╔╝██║  ██║██║  ██║    ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗███████║                  001000                   
-                  101010                             ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝     ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝                  010111                     
-                  000000101101010101010101010101101011000101101010101011000101010101010101010101001010101010110101010101010101010101010101001010110101                
-"                    
-    puts banner 
- end
 def welcome
     banner
     puts "Welcome to War Games"
@@ -68,14 +31,14 @@ def ask_user
     puts "Please Enter Name"
     name = gets.strip 
     puts "Shall we play a game, #{name}?"
-    puts "You may quit playing at any time by typing 'q'."
+    puts "You may (q)uit playing at any time."
     name 
 end 
 
 def new_game(commander)
-    nuke = Game.new(player_name: commander)
+    a_game = Game.new(player_name: commander)
     player_name = commander
-    nuke.save
+    a_game.save
 end 
 
 def row_array(city)
@@ -91,27 +54,9 @@ def count_missiles_by_city(plyer)
     end 
 end
 
-def display_city
-    pic = "
-    __    __                         ___      _
-    |  |  |  |       /|             |   |   _/ \_
-    |  |  |  |   _  | |__           |   |_-/     \-  _ _
-    |__|  |  |  |_| | | |  |/\_     |   |  \     /  |___|
-    |  |  |  |  | | __| |  |   |_   |   |   |___|   |   |
-    |  |  |^ |  | ||  | |  |   | |__|   |   |   |   |   |
-    |  |  |  |  | ||  | |  |   |/\  |   |   |   |   |   |
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~/  \~~~~~~~~~~~~~~~~~~~~~~~
-    ~ ~~  ~ ~~ ~~~ ~ ~ ~~ ~~ ~~ \   \__   ~  ~  ~~~~ ~~~ ~~
-    ~~ ~ ~ ~~~ ~~  ~~ ~~~~~~~~~~ \   \o\  ~~ ~ ~~~~ ~ ~ ~~~
-    ~ ~~~~~~~~ ~ ~ ~~ ~ ~ ~ ~ ~~~ \   \o\=   ~~ ~~  ~~ ~ ~~
-    ~ ~ ~ ~~~~~~~ ~  ~~ ~~ ~ ~~ ~ ~ ~~ ~ ~ ~~ ~~~ ~ ~ ~ ~ ~~~~
-    "
-    puts pic
-end
-
 def user_display
     rows = count_missiles_by_city("user")
-    table = Terminal::Table.new :headings => ['', 'City Name', 'Number of Missiles'], :rows => rows
+    table = Terminal::Table.new :title => "Choose a Launch Site", :headings => ['', 'City Name', 'Number of Missiles'], :rows => rows
     puts table 
 end 
 
@@ -119,14 +64,13 @@ def target_display
     big_array = City.list_cities("computer").collect do |city|
         array = row_array(city)
         array << separate_comma(city.population)
-        # binding.pry
         if Missile.find_by_dropped_on(city.id) != []
             array << "Destroyed"
         else
             array << ""
         end
     end 
-    table = Terminal::Table.new :headings => ['', 'City Name', 'Population', 'Status'], :rows => big_array
+    table = Terminal::Table.new :title => "Choose a Target", :headings => ['', 'City Name', 'Population', 'Status'], :rows => big_array
     puts table
 end
 
@@ -180,7 +124,6 @@ def launch(user_kills)
     end
     print "\e[2J\e[f"
     target_display
-
     puts "Please select the target you want to nuke."
     targeting = give_up(gets.strip)
     until Missile.find_by_dropped_on(targeting).length == 0 && targeting.between?(City.id_array('computer').min, City.id_array('computer').max)
@@ -198,8 +141,6 @@ def missile_away(selection, targeting)
     current_missile.active = false 
     current_missile.save
 end
-
-
 
 def computer_missiles
     min = City.id_array('computer').min
@@ -240,9 +181,6 @@ def user_report_results(target)
     city = City.where("id = ?", target).first
     puts "You have successfully bombed #{city.name}."
     puts "You have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
-    if target == 4
-        puts "...and 3 Walmarts."
-    end
     city.population
 end
 
@@ -250,57 +188,12 @@ def cpu_report_results(target)
     city = City.where("id = ?", target).first
     puts "The USSR has bombed #{city.name}."
     puts "They have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
+    if target == 4
+        puts "...and 3 Walmarts."
+    end
     city.population
 end
-def winningmove
 
-    move = "                           
-
-
-
-
-
-
-
-                        ██╗███╗   ██╗    ███╗   ██╗██╗   ██╗ ██████╗██╗     ███████╗ █████╗ ██████╗     ██╗    ██╗ █████╗ ██████╗                                         
-                        ██║████╗  ██║    ████╗  ██║██║   ██║██╔════╝██║     ██╔════╝██╔══██╗██╔══██╗    ██║    ██║██╔══██╗██╔══██╗                                        
-                        ██║██╔██╗ ██║    ██╔██╗ ██║██║   ██║██║     ██║     █████╗  ███████║██████╔╝    ██║ █╗ ██║███████║██████╔╝                                        
-                        ██║██║╚██╗██║    ██║╚██╗██║██║   ██║██║     ██║     ██╔══╝  ██╔══██║██╔══██╗    ██║███╗██║██╔══██║██╔══██╗                                        
-                        ██║██║ ╚████║    ██║ ╚████║╚██████╔╝╚██████╗███████╗███████╗██║  ██║██║  ██║    ╚███╔███╔╝██║  ██║██║  ██║                                        
-                        ╚═╝╚═╝  ╚═══╝    ╚═╝  ╚═══╝ ╚═════╝  ╚═════╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝     ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝                                        
-                        ████████╗██╗  ██╗███████╗     ██████╗ ███╗   ██╗██╗  ██╗   ██╗    ██╗    ██╗ █████╗ ██╗   ██╗    ████████╗ ██████╗     ██╗    ██╗██╗███╗   ██╗    
-                        ╚══██╔══╝██║  ██║██╔════╝    ██╔═══██╗████╗  ██║██║  ╚██╗ ██╔╝    ██║    ██║██╔══██╗╚██╗ ██╔╝    ╚══██╔══╝██╔═══██╗    ██║    ██║██║████╗  ██║    
-                           ██║   ███████║█████╗      ██║   ██║██╔██╗ ██║██║   ╚████╔╝     ██║ █╗ ██║███████║ ╚████╔╝        ██║   ██║   ██║    ██║ █╗ ██║██║██╔██╗ ██║    
-                           ██║   ██╔══██║██╔══╝      ██║   ██║██║╚██╗██║██║    ╚██╔╝      ██║███╗██║██╔══██║  ╚██╔╝         ██║   ██║   ██║    ██║███╗██║██║██║╚██╗██║    
-                           ██║   ██║  ██║███████╗    ╚██████╔╝██║ ╚████║███████╗██║       ╚███╔███╔╝██║  ██║   ██║          ██║   ╚██████╔╝    ╚███╔███╔╝██║██║ ╚████║    
-                           ╚═╝   ╚═╝  ╚═╝╚══════╝     ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝        ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝          ╚═╝    ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝    
-                        ██╗███████╗    ████████╗ ██████╗     ███╗   ██╗ ██████╗ ████████╗    ██████╗ ██╗      █████╗ ██╗   ██╗                                            
-                        ██║██╔════╝    ╚══██╔══╝██╔═══██╗    ████╗  ██║██╔═══██╗╚══██╔══╝    ██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝                                            
-                        ██║███████╗       ██║   ██║   ██║    ██╔██╗ ██║██║   ██║   ██║       ██████╔╝██║     ███████║ ╚████╔╝                                             
-                        ██║╚════██║       ██║   ██║   ██║    ██║╚██╗██║██║   ██║   ██║       ██╔═══╝ ██║     ██╔══██║  ╚██╔╝                                              
-                        ██║███████║       ██║   ╚██████╔╝    ██║ ╚████║╚██████╔╝   ██║       ██║     ███████╗██║  ██║   ██║██╗██╗██╗                                      
-                        ╚═╝╚══════╝       ╚═╝    ╚═════╝     ╚═╝  ╚═══╝ ╚═════╝    ╚═╝       ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝╚═╝╚═╝╚═╝
-
-
-
-"
-
-puts move 
-end
-def won 
-    won = "
-
-
-
-                                                        ██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗ ██████╗ ███╗   ██╗██╗
-                                                        ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██╔═══██╗████╗  ██║██║
-                                                         ╚████╔╝ ██║   ██║██║   ██║    ██║ █╗ ██║██║   ██║██╔██╗ ██║██║
-                                                          ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║   ██║██║╚██╗██║╚═╝
-                                                           ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝╚██████╔╝██║ ╚████║██╗
-                                                           ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝
-                                                                                                                "    
-puts won
-end
 def give_up(input)
     if input.to_s.downcase == 'q'
         puts won
@@ -328,26 +221,16 @@ def stopmusic
 end
 
 def gameover(user_kills, cpu_kills)
-    
-    overhead = "
-                                                                ██████╗  █████╗ ███╗   ███╗███████╗     ██████╗ ██╗   ██╗███████╗██████╗ 
-                                                                ██╔════╝ ██╔══██╗████╗ ████║██╔════╝    ██╔═══██╗██║   ██║██╔════╝██╔══██╗
-                                                                ██║  ███╗███████║██╔████╔██║█████╗      ██║   ██║██║   ██║█████╗  ██████╔╝
-                                                                ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝      ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗
-                                                                ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗    ╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
-                                                                ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝
-                                                                              "
-        if usernum_missiles == 0 || cpunum_missiles == 0 
+    if usernum_missiles == 0 || cpunum_missiles == 0 
         puts "You have missiles #{usernum_missiles} remaining and USSR has missiles remaining #{cpunum_missiles}"
         final_score(user_kills, cpu_kills)
-        puts overhead
+        overhead
         puts "Would you like to play again?"
         answer = gets.strip 
-        until answer.downcase == "yes" || answer == "no" do
-            
-            puts "Please answer yes or no." 
-            answer = gets.strip
-        end
+            until answer.downcase == "yes" || answer == "no" do
+                puts "Please answer yes or no." 
+                answer = gets.strip
+            end
         if answer == "yes"
             stopmusic 
             run
@@ -378,7 +261,6 @@ def run
     cpu_kills = []
     welcome 
     new_game(ask_user)
-    display_city
     build_missiles
     computer_missiles
     sleep(1)
