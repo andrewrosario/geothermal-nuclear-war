@@ -9,10 +9,10 @@ def separate_comma(number)
     number.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
 end
 def music 
-
-   pid = fork{ exec 'afplay', "balloonsong.mp3" }
-  pid 
-
+    
+      pid =  ["balloonsong.mp3", "madworld.mp3"].sample
+        fork{ exec 'afplay', pid}
+       
 end 
 
 
@@ -305,6 +305,8 @@ def give_up(input)
     if input.to_s.downcase == 'q'
         puts won
         puts winningmove
+        sleep(5)
+        stopmusic 
         exit!
     else 
         input.to_i
@@ -320,6 +322,10 @@ def cpunum_missiles
     stockpile = Missile.find_active_by_city_range(City.id_array('computer').min, City.id_array('computer').max)
     stockpile.length
 end 
+def stopmusic
+    sleep(5)
+    system("killall afplay")
+end
 
 def gameover(user_kills, cpu_kills)
     
@@ -343,9 +349,10 @@ def gameover(user_kills, cpu_kills)
             answer = gets.strip
         end
         if answer == "yes"
+            stopmusic 
             run
         else answer == "no"
-            exit!
+          stopmusic  exit!
         end 
     else
         puts "You have #{usernum_missiles} left! DEFCON 1!"
@@ -384,6 +391,7 @@ def run
         puts ''
     end
     final_score(user_kills, cpu_kills)   
+
 end
 
 
