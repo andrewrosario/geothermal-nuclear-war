@@ -18,4 +18,9 @@ class City < ActiveRecord::Base
     def self.select_city_by_player(player)
         City.where("player = ?", player)
     end
+
+    def self.id_array(player)
+        my_cities = City.all.select {|c| c.player == player}
+        my_cities.map {|c| c.id}
+    end
 end

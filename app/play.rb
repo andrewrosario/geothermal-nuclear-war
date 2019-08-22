@@ -90,7 +90,7 @@ end
 def target_display
     big_array = City.list_cities("computer").collect do |city|
         array = row_array(city)
-        array << city.population
+        array << separate_comma(city.population)
     end 
     table = Terminal::Table.new :headings => ['', 'City Name', 'Population'], :rows => big_array
     puts table
@@ -106,7 +106,7 @@ def build_missiles
         puts "You have #{n} missiles to deploy"
         puts "Where would you like to deploy your missiles?"
         input = give_up(gets.strip)
-        until input.between?(1,5)
+        until input.between?(City.id_array('user').min, City.id_array('user').max)
             puts "You must select one of your own cities"
             puts "Where would you like to deploy your missiles?"
             input = give_up(gets.strip)
@@ -150,9 +150,11 @@ def missile_away(selection, targeting)
     current_missile.save
 end
 
+
+
 def computer_missiles
-    min = City.select_city_by_player('computer').min.id
-    max = City.select_city_by_player('computer').max.id
+    min = City.id_array('computer').min
+    max = City.id_array('computer').max
     5.times do
         create_missile(rand(min..max))
     end
@@ -160,15 +162,12 @@ end
 
 def computer_launch(score)
     # puts "Computer attacking --------------------------------------------------------------------------------------"
-    computer_cities = City.select_city_by_player('computer')
-    user_cities = City.select_city_by_player('user')
-
-    from_min = computer_cities.min.id
-    from_max = computer_cities.max.id
+    from_min = City.id_array('computer').min
+    from_max = City.id_array('computer').max
     from_array = Missile.find_active_by_city_range(from_min, from_max).map {|m| m.city_id}
     
-    to_min = user_cities.min.id
-    to_max = user_cities.max.id
+    to_min = City.id_array('user').min
+    to_max = City.id_array('user').max
     to_array = (to_min..to_max).to_a
 
     # puts "To_Array is #{to_array}"
@@ -214,12 +213,12 @@ def give_up(input)
 end 
 
 def usernum_missiles
-    stockpile = Missile.find_active_by_city_range(1, 5)
+    stockpile = Missile.find_active_by_city_range(City.id_array('user').min, City.id_array('user').max)
     stockpile.length
 end
 
 def cpunum_missiles
-    stockpile = Missile.find_active_by_city_range(6, 10)
+    stockpile = Missile.find_active_by_city_range(City.id_array('computer').min, City.id_array('computer').max)
     stockpile.length
 end 
 
@@ -277,7 +276,7 @@ def run
         
 end
 
-# binding.pry
+binding.pry
 run 
 
     
