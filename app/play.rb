@@ -8,8 +8,16 @@ ActiveRecord::Base.logger = nil
 def separate_comma(number)
     number.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
 end
+def music 
 
-def welcome 
+   pid = fork{ exec 'afplay', "balloonsong.mp3" }
+  pid 
+
+end 
+
+
+
+ def banner 
     banner = 
   "       
                   000000101101010101010101010101101011000101101010101011000101010101010101010101001010101010110101010101010101010101010101001010110101        
@@ -50,6 +58,9 @@ def welcome
                   000000101101010101010101010101101011000101101010101011000101010101010101010101001010101010110101010101010101010101010101001010110101                
 "                    
     puts banner 
+ end
+def welcome
+    banner
     puts "Welcome to War Games"
 end 
 
@@ -125,6 +136,8 @@ def build_missiles
     puts "You will build an ICBM by assigning that missile to a city." 
     puts "Select a city by entering the number associated with that city."
     while n > 0 
+        print "\e[2J\e[f"
+        banner
         user_display
         puts "You have #{n} missiles to deploy"
         puts "Where would you like to deploy your missiles?"
@@ -155,6 +168,7 @@ def limit_input(input, player)
 end
     
 def launch(user_kills)
+    print "\e[2J\e[f"
     sleep(1)
     user_display
     puts "Please select a city from which to launch your missile."
@@ -164,6 +178,7 @@ def launch(user_kills)
         puts "Please select a city from which to launch your missile."
         selection = give_up(gets.strip)
     end
+    print "\e[2J\e[f"
     target_display
 
     puts "Please select the target you want to nuke."
@@ -216,6 +231,7 @@ def computer_launch(score)
         # puts 'end until'
         missile_away(from_city, to_city)
         score << cpu_report_results(to_city)
+        sleep(3)
     end
     # puts "End Attack---------------------------------------------------------------------------------------------------"
 end
@@ -236,12 +252,59 @@ def cpu_report_results(target)
     puts "They have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
     city.population
 end
+def winningmove
+
+    move = "                           
 
 
+
+
+
+
+
+                        ██╗███╗   ██╗    ███╗   ██╗██╗   ██╗ ██████╗██╗     ███████╗ █████╗ ██████╗     ██╗    ██╗ █████╗ ██████╗                                         
+                        ██║████╗  ██║    ████╗  ██║██║   ██║██╔════╝██║     ██╔════╝██╔══██╗██╔══██╗    ██║    ██║██╔══██╗██╔══██╗                                        
+                        ██║██╔██╗ ██║    ██╔██╗ ██║██║   ██║██║     ██║     █████╗  ███████║██████╔╝    ██║ █╗ ██║███████║██████╔╝                                        
+                        ██║██║╚██╗██║    ██║╚██╗██║██║   ██║██║     ██║     ██╔══╝  ██╔══██║██╔══██╗    ██║███╗██║██╔══██║██╔══██╗                                        
+                        ██║██║ ╚████║    ██║ ╚████║╚██████╔╝╚██████╗███████╗███████╗██║  ██║██║  ██║    ╚███╔███╔╝██║  ██║██║  ██║                                        
+                        ╚═╝╚═╝  ╚═══╝    ╚═╝  ╚═══╝ ╚═════╝  ╚═════╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝     ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝                                        
+                        ████████╗██╗  ██╗███████╗     ██████╗ ███╗   ██╗██╗  ██╗   ██╗    ██╗    ██╗ █████╗ ██╗   ██╗    ████████╗ ██████╗     ██╗    ██╗██╗███╗   ██╗    
+                        ╚══██╔══╝██║  ██║██╔════╝    ██╔═══██╗████╗  ██║██║  ╚██╗ ██╔╝    ██║    ██║██╔══██╗╚██╗ ██╔╝    ╚══██╔══╝██╔═══██╗    ██║    ██║██║████╗  ██║    
+                           ██║   ███████║█████╗      ██║   ██║██╔██╗ ██║██║   ╚████╔╝     ██║ █╗ ██║███████║ ╚████╔╝        ██║   ██║   ██║    ██║ █╗ ██║██║██╔██╗ ██║    
+                           ██║   ██╔══██║██╔══╝      ██║   ██║██║╚██╗██║██║    ╚██╔╝      ██║███╗██║██╔══██║  ╚██╔╝         ██║   ██║   ██║    ██║███╗██║██║██║╚██╗██║    
+                           ██║   ██║  ██║███████╗    ╚██████╔╝██║ ╚████║███████╗██║       ╚███╔███╔╝██║  ██║   ██║          ██║   ╚██████╔╝    ╚███╔███╔╝██║██║ ╚████║    
+                           ╚═╝   ╚═╝  ╚═╝╚══════╝     ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝        ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝          ╚═╝    ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝    
+                        ██╗███████╗    ████████╗ ██████╗     ███╗   ██╗ ██████╗ ████████╗    ██████╗ ██╗      █████╗ ██╗   ██╗                                            
+                        ██║██╔════╝    ╚══██╔══╝██╔═══██╗    ████╗  ██║██╔═══██╗╚══██╔══╝    ██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝                                            
+                        ██║███████╗       ██║   ██║   ██║    ██╔██╗ ██║██║   ██║   ██║       ██████╔╝██║     ███████║ ╚████╔╝                                             
+                        ██║╚════██║       ██║   ██║   ██║    ██║╚██╗██║██║   ██║   ██║       ██╔═══╝ ██║     ██╔══██║  ╚██╔╝                                              
+                        ██║███████║       ██║   ╚██████╔╝    ██║ ╚████║╚██████╔╝   ██║       ██║     ███████╗██║  ██║   ██║██╗██╗██╗                                      
+                        ╚═╝╚══════╝       ╚═╝    ╚═════╝     ╚═╝  ╚═══╝ ╚═════╝    ╚═╝       ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝╚═╝╚═╝╚═╝
+
+
+
+"
+
+puts move 
+end
+def won 
+    won = "
+
+
+
+                                                        ██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗ ██████╗ ███╗   ██╗██╗
+                                                        ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██╔═══██╗████╗  ██║██║
+                                                         ╚████╔╝ ██║   ██║██║   ██║    ██║ █╗ ██║██║   ██║██╔██╗ ██║██║
+                                                          ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║   ██║██║╚██╗██║╚═╝
+                                                           ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝╚██████╔╝██║ ╚████║██╗
+                                                           ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝
+                                                                                                                "    
+puts won
+end
 def give_up(input)
     if input.to_s.downcase == 'q'
-        puts "You won!"
-        puts "In Nuclear War, the only winning move is not to play."
+        puts won
+        puts winningmove
         exit!
     else 
         input.to_i
@@ -303,6 +366,7 @@ def count_and_destroy_missiles(target)
 end
 
 def run 
+    music
     user_kills = []
     cpu_kills = []
     welcome 
@@ -322,7 +386,7 @@ def run
     final_score(user_kills, cpu_kills)   
 end
 
-binding.pry
+
 run 
 
     
