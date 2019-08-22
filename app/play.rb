@@ -9,17 +9,11 @@ ActiveRecord::Base.logger = nil
 def separate_comma(number)
     number.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
 end
-<<<<<<< HEAD
-
-def music 
-    pid = fork{ exec 'afplay', "balloonsong.mp3" }
-=======
 def music 
     
       pid =  ["balloonsong.mp3", "madworld.mp3"].sample
         fork{ exec 'afplay', pid}
        
->>>>>>> origin/master
 end 
 
 def welcome
