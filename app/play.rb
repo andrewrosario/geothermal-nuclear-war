@@ -9,11 +9,10 @@ ActiveRecord::Base.logger = nil
 def separate_comma(number)
     number.to_s.chars.to_a.reverse.each_slice(3).map(&:join).join(",").reverse
 end
+
 def music 
-    
       pid =  ["balloonsong.mp3", "madworld.mp3"].sample
         fork{ exec 'afplay', pid}
-       
 end 
 
 def welcome
@@ -24,8 +23,8 @@ end
 def ask_user 
     puts "Please Enter Name"
     name = gets.strip 
-    puts "Shall we play a game, #{name}?"
-    puts "You may (q)uit playing at any time."
+    puts "Shall we play a game, #{name}?
+    You may (q)uit playing at any time."
     name 
 end 
 
@@ -70,19 +69,19 @@ end
 
 def build_missiles
     n = 5 
-    puts "You are now able to create your nuclear arsenal."
-    puts "You will build an ICBM by assigning that missile to a city." 
-    puts "Select a city by entering the number associated with that city."
+    puts "You are now able to create your nuclear arsenal.
+    You will build an ICBM by assigning that missile to a city.
+    Select a city by entering the number associated with that city."
     while n > 0 
         print "\e[2J\e[f"
         banner
         user_display
-        puts "You have #{n} missiles to deploy"
-        puts "Where would you like to deploy your missiles?"
+        puts "You have #{n} missiles to deploy
+        Where would you like to deploy your missiles?"
         input = give_up(gets.strip)
         until input.between?(City.id_array('user').min, City.id_array('user').max)
-            puts "You must select one of your own cities"
-            puts "Where would you like to deploy your missiles?"
+            puts "You must select one of your own cities
+            Where would you like to deploy your missiles?"
             input = give_up(gets.strip)
         end
         create_missile(input)
@@ -112,8 +111,8 @@ def launch(user_kills)
     puts "Please select a city from which to launch your missile."
     selection = give_up(gets.strip)
     until Missile.all.find {|m| m.city_id == selection && m.active == true && m.game_id == Game.last.id}
-        puts "That city has no missiles."
-        puts "Please select a city from which to launch your missile."
+        puts "That city has no missiles.
+        Please select a city from which to launch your missile."
         selection = give_up(gets.strip)
     end
     print "\e[2J\e[f"
@@ -121,8 +120,8 @@ def launch(user_kills)
     puts "Please select the target you want to nuke."
     targeting = give_up(gets.strip)
     until Missile.find_by_dropped_on(targeting).length == 0 && targeting.between?(City.id_array('computer').min, City.id_array('computer').max)
-        puts "You have already killed everyone in that city or your input is invalid."
-        puts "Please select the target you want to nuke."
+        puts "You have already killed everyone in that city or your input is invalid.
+        Please select the target you want to nuke."
         targeting = give_up(gets.strip)
     end
     missile_away(selection, targeting)
@@ -145,7 +144,6 @@ def computer_missiles
 end
 
 def computer_launch(score)
-    # puts "Computer attacking --------------------------------------------------------------------------------------"
     from_min = City.id_array('computer').min
     from_max = City.id_array('computer').max
     from_array = Missile.find_active_by_city_range(from_min, from_max).map {|m| m.city_id}
@@ -154,34 +152,31 @@ def computer_launch(score)
     to_max = City.id_array('user').max
     to_array = (to_min..to_max).to_a
 
-    # puts "To_Array is #{to_array}"
-    # puts "From_Array is #{from_array}"
     if to_array.length > 0 && from_array.length > 0
-        # puts "IF!!!!"
         from_city = from_array.delete(from_array.sample)
         to_city = to_array.delete(to_array.sample)
         until !Missile.all.find {|m| m.dropped_on == to_city && m.game_id == Game.last.id}
             to_city = to_array.delete(to_array.sample)
         end
-        # puts 'end until'
         missile_away(from_city, to_city)
         score << cpu_report_results(to_city)
         sleep(3)
     end
-    # puts "End Attack---------------------------------------------------------------------------------------------------"
 end
 
 def user_report_results(target)
     city = City.where("id = ?", target).first
-    puts "You have successfully bombed #{city.name}."
-    puts "You have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
+    puts "You have successfully bombed #{city.name}.
+    You have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles.
+    
+    "
     city.population
 end
 
 def cpu_report_results(target)
     city = City.where("id = ?", target).first
-    puts "The USSR has bombed #{city.name}."
-    puts "They have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
+    puts "The USSR has bombed #{city.name}.
+    They have killed #{separate_comma(city.population)} people and destroyed #{count_and_destroy_missiles(target)} missiles."
     if target == 4
         puts "...and 3 Walmarts."
     end
@@ -267,7 +262,6 @@ def run
         puts ''
     end
     final_score(user_kills, cpu_kills)   
-
 end
 
 
